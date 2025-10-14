@@ -10,23 +10,24 @@
 $a=3;
 $b=4;
 $c=5;
+
+function pole($a, $b)
+{
+    $z = 0.5 * $a * $b;
+    return "pole: $z";
+}
+
 function pitagoras($a, $b, $c)
 {
-    if ($a * $a + $b * $b == $c * $c )
+    if ($a * $a + $b * $b == $c * $c)
     {
-        return "trójkąt jest pitagorejski";
-        function pole($a, $b)
-        {
-            $z = 0.5 * $a * $b;
-            return "pole: $z" ;
-        }
-        {
-
-        }
+        $pole_wyniku = pole($a, $b);
+        return "trójkąt jest pitagorejski<br>" . $pole_wyniku;
     } else {
-        return "trójkąt nie jest pitagorejski";
+        return "To nie są boki trójkąta prostokątnego";
     }
 }
+
 echo pitagoras($a, $b, $c);
 ?>
 </body>
