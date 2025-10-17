@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="PL">
+<head>
+    <meta charset="UTF-8">
+    <title>Formularz bez php</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+<h1>Formularz rejestracyjny</h1>
+</header>
+
+<div class="opa">
+    <label for="nazwisko"><span class="red">(*)</span> - pola obowiązkowe</label><br> <br>
+    <form action="#" method="post">
+        <label for="nazwisko">Nazwisko:<span class="red">*</span></label>
+        <input type="text" id="nazwisko" name="nazwisko" placeholder="nazwisko" required><br><br>
+
+        <label for="text">Imię: <span class="red">*</span></label>
+        <input type="text" id="imie" name="imie" placeholder="imie" required><br><br>
+
+        <label for="text">Adres: <span class="red">*</span></label>
+        <input type="kod pocztowy" id="password" name="password" placeholder="00-000" required><br><br>
+        <input type="miasto" id="miasto" name="miasto" placeholder="miasto" required><br><br>
+        <hr>
+        <br>
+        <label for="plec"> Wybierz płeć: </label>
+        <input type="radio" id="kobieta" name="plec" value="kobieta" checked>
+        <label for="kobieta">Kobieta</label>
+        <input type="radio" id="mezczyzna" name="plec" value="mezczyzna">
+        <label for="mezczyzna">Mężczyzna</label><br><br>
+        <hr>
+        <br>
+        <label for="wykształcenie">Wykształcenie:</label><br><br>
+        <input type="radio" id="podstawowe" name="wyksztalcenie" value="podstawowe" checked>
+        <label for="podstawowe">Podstawowe</label><br>
+        <input type="radio" id="srednie" name="wyksztalcenie" value="srednie">
+        <label for="srednie">Średnie</label><br>
+        <input type="radio" id="wyzsze" name="wyksztalcenie" value="wyzsze">
+        <label for="wyzsze">Wyższe</label><br><br>
+        <hr>
+        <br>
+        <select name="języki" id="jezyki" multiple size="6">
+            <option value="angielski">Angielski</option>
+            <option value="niemiecki">Niemiecki</option>
+            <option value="francuski">Francuski</option>
+            <option value="wloski">Włoski</option>
+            <option value="hiszpanski">Hiszpański</option>
+            <option value="rosyjski">Rosyjski</option>
+        </select><br><br>
+    </form>
+</div>
+
+</body>
+</html>

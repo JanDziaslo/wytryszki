@@ -1,0 +1,22 @@
+*
+{
+    margin: 0;
+}
+
+header
+{
+    background: blue;
+    color: white;
+}
+.opa
+{
+    padding: 10px;
+    margin: 20px;
+}
+.red {
+    color: red;
+}
+label
+{
+    font-weight: bold;
+}
