@@ -27,7 +27,7 @@ if (realpath($requestedPath) === __FILE__) {
 if (!file_exists($requestedPath)) {
     http_response_code(404);
     echo "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>404 Not Found</title>";
-    echo "<style>body{font-family:Arial;padding:40px;background:#f5f5f5;}h1{color:#e74c3c;}</style></head>";
+    echo "<style>body{font-family:Arial;padding:40px;background:#1a1a1a;color:#e0e0e0;}h1{color:#ff6b6b;}a{color:#64b5f6;}</style></head>";
     echo "<body><h1>404 - Nie znaleziono</h1>";
     echo "<p>Plik <strong>" . htmlspecialchars($requestUri) . "</strong> nie istnieje.</p>";
     echo "<a href='/'>← Powrót do głównej</a></body></html>";
@@ -40,7 +40,8 @@ $realRequested = realpath($requestedPath);
 
 if ($realRequested === false || strpos($realRequested, $realBase) !== 0) {
     http_response_code(403);
-    echo "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>403 Forbidden</title></head>";
+    echo "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>403 Forbidden</title>";
+    echo "<style>body{font-family:Arial;padding:40px;background:#1a1a1a;color:#e0e0e0;}h1{color:#ff6b6b;}</style></head>";
     echo "<body><h1>403 - Zabroniony dostęp</h1></body></html>";
     exit;
 }
@@ -81,7 +82,8 @@ if (is_dir($realRequested)) {
     
     if ($items === false) {
         http_response_code(403);
-        echo "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>403 Forbidden</title></head>";
+        echo "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>403 Forbidden</title>";
+        echo "<style>body{font-family:Arial;padding:40px;background:#1a1a1a;color:#e0e0e0;}h1{color:#ff6b6b;}</style></head>";
         echo "<body><h1>403 - Brak dostępu</h1></body></html>";
         exit;
     }
@@ -91,15 +93,15 @@ if (is_dir($realRequested)) {
     echo "<meta name='viewport' content='width=device-width, initial-scale=1.0'>";
     echo "<title>Index of " . htmlspecialchars($requestUri) . "</title>";
     echo "<style>";
-    echo "body { font-family: 'Segoe UI', Arial, sans-serif; padding: 20px; background: #f5f5f5; }";
-    echo ".container { max-width: 1000px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }";
-    echo "h2 { color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px; margin-top: 0; }";
-    echo "a { display: block; padding: 12px; margin: 5px 0; text-decoration: none; color: #007bff; border-radius: 4px; transition: all 0.2s; }";
-    echo "a:hover { background: #f0f8ff; transform: translateX(5px); }";
+    echo "body { font-family: 'Segoe UI', Arial, sans-serif; padding: 20px; background: #1a1a1a; }";
+    echo ".container { max-width: 1000px; margin: 0 auto; background: #2d2d2d; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.5); }";
+    echo "h2 { color: #e0e0e0; border-bottom: 2px solid #64b5f6; padding-bottom: 10px; margin-top: 0; }";
+    echo "a { display: block; padding: 12px; margin: 5px 0; text-decoration: none; color: #64b5f6; border-radius: 4px; transition: all 0.2s; }";
+    echo "a:hover { background: #3a3a3a; transform: translateX(5px); }";
     echo ".folder { font-weight: bold; }";
-    echo ".file { color: #555; }";
-    echo ".parent { color: #666; background: #f8f9fa; margin-bottom: 15px; font-weight: bold; }";
-    echo "hr { border: none; border-top: 1px solid #ddd; margin: 20px 0; }";
+    echo ".file { color: #b0b0b0; }";
+    echo ".parent { color: #90caf9; background: #383838; margin-bottom: 15px; font-weight: bold; }";
+    echo "hr { border: none; border-top: 1px solid #444; margin: 20px 0; }";
     echo ".icon { display: inline-block; width: 24px; }";
     echo "</style></head><body><div class='container'>";
     echo "<h2>📂 Index of " . htmlspecialchars($requestUri) . "</h2>";
@@ -190,6 +192,7 @@ if (is_dir($realRequested)) {
 
 // Jeśli dotarliśmy tutaj - coś poszło nie tak
 http_response_code(500);
-echo "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>500 Internal Server Error</title></head>";
+echo "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>500 Internal Server Error</title>";
+echo "<style>body{font-family:Arial;padding:40px;background:#1a1a1a;color:#e0e0e0;}h1{color:#ff6b6b;}</style></head>";
 echo "<body><h1>500 - Błąd serwera</h1></body></html>";
 ?>
