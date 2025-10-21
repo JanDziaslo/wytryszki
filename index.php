@@ -3,16 +3,42 @@
 $requestUri = urldecode($_SERVER['REQUEST_URI']);
 $requestUri = parse_url($requestUri, PHP_URL_PATH);
 
-// Zbuduj pełną ścieżkę do zasobu
-$requestedPath = __DIR__ . $requestUri;
+// Usuń wielokrotne slashe
+$requestUri = preg_replace('#/+#', '/', $requestUri);
 
-// Jeśli to plik i istnieje, pozwól PHP go obsłużyć
+// Zbuduj pełną ścieżkę do zasobu
+$requestedPath = realpath(__DIR__ . $requestUri);
+
+// Zabezpieczenie przed wyjściem poza DocumentRoot
+if ($requestedPath === false || strpos($requestedPath, realpath(__DIR__)) !== 0) {
+    http_response_code(403);
+    echo "<!DOCTYPE html>";
+    echo "<html><head><meta charset='UTF-8'><title>403 Forbidden</title></head>";
+    echo "<body><h1>403 - Zabroniony dostęp</h1>";
+    echo "<p>Próba dostępu poza dozwolony katalog.</p>";
+    echo "</body></html>";
+    exit;
+}
+
+// Jeśli to plik PHP, wykonaj go
+if (is_file($requestedPath) && pathinfo($requestedPath, PATHINFO_EXTENSION) === 'php') {
+    // Zmień working directory na katalog pliku
+    chdir(dirname($requestedPath));
+    // Wykonaj plik PHP
+    include $requestedPath;
+    exit;
+}
+
+// Jeśli to inny plik (html, css, js, etc), zwróć go
 if (is_file($requestedPath)) {
-    return false; // PHP wykona plik
+    $mimeType = mime_content_type($requestedPath);
+    header('Content-Type: ' . $mimeType);
+    readfile($requestedPath);
+    exit;
 }
 
 // Jeśli to katalog, pokaż listę zawartości
-if (is_dir($requestedPath)) {
+if (is_dir($requestedPath) && is_readable($requestedPath)) {
     header("Content-Type: text/html; charset=utf-8");
 
     echo "<!DOCTYPE html>";
@@ -38,19 +64,27 @@ if (is_dir($requestedPath)) {
     // Link do katalogu nadrzędnego
     if ($requestUri !== '/') {
         $parentDir = dirname($requestUri);
-        if ($parentDir === '') $parentDir = '/';
+        if ($parentDir === '' || $parentDir === '.') $parentDir = '/';
         echo "<a href='" . htmlspecialchars($parentDir) . "' class='parent'>⬆️ [Katalog nadrzędny]</a>";
         echo "<hr>";
     }
 
     // Pobierz zawartość katalogu
-    $items = scandir($requestedPath);
+    $items = @scandir($requestedPath);
+    
+    if ($items === false) {
+        http_response_code(403);
+        echo "<p>❌ Brak dostępu do tego katalogu.</p>";
+        echo "</div></body></html>";
+        exit;
+    }
+    
     $folders = [];
     $files = [];
 
     // Rozdziel foldery i pliki
     foreach ($items as $item) {
-        if ($item === '.' || $item === '..') continue;
+        if ($item === '.' || $item === '..' || $item === '.git' || $item === '.github' || $item === '.idea') continue;
 
         $fullPath = $requestedPath . '/' . $item;
 
@@ -74,13 +108,29 @@ if (is_dir($requestedPath)) {
     // Potem pliki
     foreach ($files as $file) {
         $urlPath = rtrim($requestUri, '/') . '/' . rawurlencode($file);
-        $icon = (pathinfo($file, PATHINFO_EXTENSION) === 'php') ? '🐘' : '📄';
+        $ext = pathinfo($file, PATHINFO_EXTENSION);
+        
+        // Ikony dla różnych typów plików
+        if ($ext === 'php') {
+            $icon = '🐘';
+        } elseif ($ext === 'html' || $ext === 'htm') {
+            $icon = '🌐';
+        } elseif ($ext === 'css') {
+            $icon = '🎨';
+        } elseif ($ext === 'js') {
+            $icon = '⚡';
+        } elseif (in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'svg'])) {
+            $icon = '🖼️';
+        } else {
+            $icon = '📄';
+        }
+        
         echo "<a href='" . htmlspecialchars($urlPath) . "' class='file'>$icon " . htmlspecialchars($file) . "</a>";
     }
 
     echo "</div>";
     echo "</body></html>";
-    return true;
+    exit;
 }
 
 // Jeśli zasób nie istnieje, zwróć 404
@@ -89,6 +139,7 @@ echo "<!DOCTYPE html>";
 echo "<html><head><meta charset='UTF-8'><title>404 Not Found</title></head>";
 echo "<body><h1>404 - Nie znaleziono</h1>";
 echo "<p>Zasób <strong>" . htmlspecialchars($requestUri) . "</strong> nie istnieje.</p>";
+echo "<p>Szukana ścieżka: <code>" . htmlspecialchars($requestedPath) . "</code></p>";
 echo "</body></html>";
-return true;
+exit;
 ?>
