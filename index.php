@@ -18,7 +18,6 @@ $requestedPath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $requestedPath);
 
 // Bezpieczeństwo - sprawdź czy to index.php
 if (realpath($requestedPath) === __FILE__) {
-    // Jeśli ktoś próbuje otworzyć index.php bezpośrednio - pokaż główny katalog
     $requestUri = '/';
     $requestedPath = $basePath;
 }
@@ -49,29 +48,75 @@ if ($realRequested === false || strpos($realRequested, $realBase) !== 0) {
 // WAŻNE: Jeśli to plik PHP - WYKONAJ GO
 if (is_file($realRequested)) {
     $extension = strtolower(pathinfo($realRequested, PATHINFO_EXTENSION));
-    
+
+    // Luka 3: Whitelist bezpiecznych rozszerzeń
+    $allowedExtensions = ['php'];
+    $dangerousExtensions = ['phtml', 'phar', 'shtml', 'pht', 'phps'];
+
     if ($extension === 'php') {
+        // Dodatkowa ochrona przed niebezpiecznymi rozszerzeniami
+        if (in_array($extension, $dangerousExtensions, true)) {
+            http_response_code(403);
+            echo "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>403 Forbidden</title>";
+            echo "<style>body{font-family:Arial;padding:40px;background:#1a1a1a;color:#e0e0e0;}h1{color:#ff6b6b;}</style></head>";
+            echo "<body><h1>403 - Typ pliku zabroniony</h1></body></html>";
+            exit;
+        }
+
         // Zmień katalog roboczy na katalog pliku
         chdir(dirname($realRequested));
-        
+
         // Wyczyść output buffer jeśli był otwarty
         while (ob_get_level()) {
             ob_end_clean();
         }
-        
+
         // WYKONAJ plik PHP
         require $realRequested;
         exit;
     }
-    
+
     // Jeśli to inny plik (nie PHP) - zwróć go z odpowiednim MIME type
-    if (function_exists('mime_content_type')) {
-        $mimeType = mime_content_type($realRequested);
-    } else {
-        $mimeType = 'application/octet-stream';
+    // Luka 1: Użyj finfo_file() zamiast deprecated mime_content_type()
+    $mimeType = 'application/octet-stream';
+
+    if (function_exists('finfo_file')) {
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        if ($finfo) {
+            $detected = finfo_file($finfo, $realRequested);
+            finfo_close($finfo);
+            if ($detected) {
+                $mimeType = $detected;
+            }
+        }
+    } elseif (function_exists('mime_content_type')) {
+        $detected = @mime_content_type($realRequested);
+        if ($detected) {
+            $mimeType = $detected;
+        }
     }
-    
+
+    // Luka 2: Dodaj Content-Disposition i limit rozmiaru
+    $maxFileSize = 100 * 1024 * 1024; // 100 MB
+    $fileSize = filesize($realRequested);
+
+    if ($fileSize > $maxFileSize) {
+        http_response_code(413);
+        echo "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>413 Payload Too Large</title>";
+        echo "<style>body{font-family:Arial;padding:40px;background:#1a1a1a;color:#e0e0e0;}h1{color:#ff6b6b;}</style></head>";
+        echo "<body><h1>413 - Plik zbyt duży</h1></body></html>";
+        exit;
+    }
+
     header('Content-Type: ' . $mimeType);
+    header('Content-Disposition: inline; filename="' . basename($realRequested) . '"');
+    header('Content-Length: ' . $fileSize);
+    header('X-Content-Type-Options: nosniff');
+
+    // Luka 4: Set timeout i memory limit
+    set_time_limit(30);
+    ini_set('memory_limit', '128M');
+
     readfile($realRequested);
     exit;
 }
@@ -79,7 +124,7 @@ if (is_file($realRequested)) {
 // Jeśli to katalog - pokaż listing
 if (is_dir($realRequested)) {
     $items = @scandir($realRequested);
-    
+
     if ($items === false) {
         http_response_code(403);
         echo "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>403 Forbidden</title>";
@@ -87,11 +132,11 @@ if (is_dir($realRequested)) {
         echo "<body><h1>403 - Brak dostępu</h1></body></html>";
         exit;
     }
-    
+
     header("Content-Type: text/html; charset=utf-8");
     echo "<!DOCTYPE html><html><head><meta charset='UTF-8'>";
     echo "<meta name='viewport' content='width=device-width, initial-scale=1.0'>";
-    echo "<title>Index of " . htmlspecialchars($requestUri) . "</title>";
+    echo "<title>Wytryszki " . htmlspecialchars($requestUri) . "</title>";
     echo "<style>";
     echo "body { font-family: 'Segoe UI', Arial, sans-serif; padding: 20px; background: #1a1a1a; }";
     echo ".container { max-width: 1000px; margin: 0 auto; background: #2d2d2d; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.5); }";
@@ -104,8 +149,8 @@ if (is_dir($realRequested)) {
     echo "hr { border: none; border-top: 1px solid #444; margin: 20px 0; }";
     echo ".icon { display: inline-block; width: 24px; }";
     echo "</style></head><body><div class='container'>";
-    echo "<h2>📂 Index of " . htmlspecialchars($requestUri) . "</h2>";
-    
+    echo "<h2>📂 Wytryszki " . htmlspecialchars($requestUri) . "</h2>";
+
     // Link do katalogu nadrzędnego
     if ($requestUri !== '/' && $requestUri !== '') {
         $parentDir = dirname($requestUri);
@@ -115,41 +160,41 @@ if (is_dir($realRequested)) {
         echo "<a href='" . htmlspecialchars($parentDir) . "' class='parent'><span class='icon'>⬆️</span> [Katalog nadrzędny]</a>";
         echo "<hr>";
     }
-    
+
     $folders = [];
     $files = [];
-    
+
     // Rozdziel foldery i pliki
     foreach ($items as $item) {
         // Ukryj pliki/katalogi zaczynające się od kropki
         if ($item === '.' || $item === '..' || $item[0] === '.') {
             continue;
         }
-        
+
         $fullPath = $realRequested . DIRECTORY_SEPARATOR . $item;
-        
+
         if (is_dir($fullPath)) {
             $folders[] = $item;
         } else {
             $files[] = $item;
         }
     }
-    
+
     // Sortuj alfabetycznie
     sort($folders, SORT_NATURAL | SORT_FLAG_CASE);
     sort($files, SORT_NATURAL | SORT_FLAG_CASE);
-    
+
     // Wyświetl foldery
     foreach ($folders as $folder) {
         $urlPath = rtrim($requestUri, '/') . '/' . rawurlencode($folder);
         echo "<a href='" . htmlspecialchars($urlPath) . "/' class='folder'><span class='icon'>📁</span> " . htmlspecialchars($folder) . "/</a>";
     }
-    
+
     // Wyświetl pliki
     foreach ($files as $file) {
         $urlPath = rtrim($requestUri, '/') . '/' . rawurlencode($file);
         $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
-        
+
         // Ikony dla różnych typów plików
         switch ($ext) {
             case 'php':
@@ -182,10 +227,10 @@ if (is_dir($realRequested)) {
             default:
                 $icon = '📄';
         }
-        
+
         echo "<a href='" . htmlspecialchars($urlPath) . "' class='file'><span class='icon'>$icon</span> " . htmlspecialchars($file) . "</a>";
     }
-    
+
     echo "</div></body></html>";
     exit;
 }
