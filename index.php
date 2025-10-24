@@ -28,16 +28,27 @@ if (!file_exists($requestedPath)) {
     echo "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>404 Not Found</title>";
     echo "<style>body{font-family:Arial;padding:40px;background:#1a1a1a;color:#e0e0e0;}h1{color:#ff6b6b;}a{color:#64b5f6;}</style></head>";
     echo "<body><h1>404 - Nie znaleziono</h1>";
-    echo "<p>Plik <strong>" . htmlspecialchars($requestUri) . "</strong> nie istnieje.</p>";
+    echo "<p>Plik <strong>" . htmlspecialchars($requestUri, ENT_QUOTES, 'UTF-8') . "</strong> nie istnieje.</p>";
     echo "<a href='/'>← Powrót do głównej</a></body></html>";
     exit;
 }
 
-// Sprawdź bezpieczeństwo - czy nie wychodzi poza DocumentRoot
+// NAPRAWKA 1: Sprawdź bezpieczeństwo - symlink-safe path traversal check
 $realBase = realpath($basePath);
 $realRequested = realpath($requestedPath);
 
-if ($realRequested === false || strpos($realRequested, $realBase) !== 0) {
+if ($realBase === false) {
+    http_response_code(500);
+    echo "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>500 Internal Server Error</title>";
+    echo "<style>body{font-family:Arial;padding:40px;background:#1a1a1a;color:#e0e0e0;}h1{color:#ff6b6b;}</style></head>";
+    echo "<body><h1>500 - Błąd konfiguracji serwera</h1></body></html>";
+    exit;
+}
+
+// Symlink-safe check: upewnij się że realpath() zwrócił prawidłową ścieżkę
+// i że ścieżka znajduje się w basePath (z dodatkowym separatorem)
+if ($realRequested === false ||
+    ($realRequested !== $realBase && strpos($realRequested, $realBase . DIRECTORY_SEPARATOR) !== 0)) {
     http_response_code(403);
     echo "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>403 Forbidden</title>";
     echo "<style>body{font-family:Arial;padding:40px;background:#1a1a1a;color:#e0e0e0;}h1{color:#ff6b6b;}</style></head>";
@@ -49,20 +60,20 @@ if ($realRequested === false || strpos($realRequested, $realBase) !== 0) {
 if (is_file($realRequested)) {
     $extension = strtolower(pathinfo($realRequested, PATHINFO_EXTENSION));
 
-    // Luka 3: Whitelist bezpiecznych rozszerzeń
+    // NAPRAWKA 2: Whitelist bezpiecznych rozszerzeń + niebezpieczne rozszerzenia
     $allowedExtensions = ['php'];
-    $dangerousExtensions = ['phtml', 'phar', 'shtml', 'pht', 'phps'];
+    $dangerousExtensions = ['phtml', 'phar', 'shtml', 'pht', 'phps', 'php3', 'php4', 'php5', 'phtml', 'pht', 'phps'];
+
+    // Sprawdzenie czy rozszerzenie jest niebezpieczne WCZEŚNIEJ
+    if (in_array($extension, $dangerousExtensions, true)) {
+        http_response_code(403);
+        echo "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>403 Forbidden</title>";
+        echo "<style>body{font-family:Arial;padding:40px;background:#1a1a1a;color:#e0e0e0;}h1{color:#ff6b6b;}</style></head>";
+        echo "<body><h1>403 - Typ pliku zabroniony</h1></body></html>";
+        exit;
+    }
 
     if ($extension === 'php') {
-        // Dodatkowa ochrona przed niebezpiecznymi rozszerzeniami
-        if (in_array($extension, $dangerousExtensions, true)) {
-            http_response_code(403);
-            echo "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>403 Forbidden</title>";
-            echo "<style>body{font-family:Arial;padding:40px;background:#1a1a1a;color:#e0e0e0;}h1{color:#ff6b6b;}</style></head>";
-            echo "<body><h1>403 - Typ pliku zabroniony</h1></body></html>";
-            exit;
-        }
-
         // Zmień katalog roboczy na katalog pliku
         chdir(dirname($realRequested));
 
@@ -77,7 +88,6 @@ if (is_file($realRequested)) {
     }
 
     // Jeśli to inny plik (nie PHP) - zwróć go z odpowiednim MIME type
-    // Luka 1: Użyj finfo_file() zamiast deprecated mime_content_type()
     $mimeType = 'application/octet-stream';
 
     if (function_exists('finfo_file')) {
@@ -96,7 +106,7 @@ if (is_file($realRequested)) {
         }
     }
 
-    // Luka 2: Dodaj Content-Disposition i limit rozmiaru
+    // Sprawdzenie limitu rozmiaru pliku
     $maxFileSize = 100 * 1024 * 1024; // 100 MB
     $fileSize = filesize($realRequested);
 
@@ -108,14 +118,20 @@ if (is_file($realRequested)) {
         exit;
     }
 
+    // NAPRAWKA 3: Sanitizacja Content-Disposition - usunięcie znaków specjalnych
+    $filename = preg_replace('/[^a-zA-Z0-9._\-]/', '_', basename($realRequested));
+    $filename = preg_replace('/_+/', '_', $filename);
+
     header('Content-Type: ' . $mimeType);
-    header('Content-Disposition: inline; filename="' . basename($realRequested) . '"');
+    header('Content-Disposition: inline; filename="' . $filename . '"');
     header('Content-Length: ' . $fileSize);
     header('X-Content-Type-Options: nosniff');
 
-    // Luka 4: Set timeout i memory limit
-    set_time_limit(30);
-    ini_set('memory_limit', '128M');
+    // NAPRAWKA 6: Zwiększony time limit dla dużych plików
+    // Dynamiczny time limit: 1 sekunda na MB
+    $recommendedTimeout = max(60, ceil($fileSize / (1024 * 1024)));
+    set_time_limit($recommendedTimeout);
+    ini_set('memory_limit', '256M');
 
     readfile($realRequested);
     exit;
@@ -136,7 +152,7 @@ if (is_dir($realRequested)) {
     header("Content-Type: text/html; charset=utf-8");
     echo "<!DOCTYPE html><html><head><meta charset='UTF-8'>";
     echo "<meta name='viewport' content='width=device-width, initial-scale=1.0'>";
-    echo "<title>Wytryszki " . htmlspecialchars($requestUri) . "</title>";
+    echo "<title>Wytryszki " . htmlspecialchars($requestUri, ENT_QUOTES, 'UTF-8') . "</title>";
     echo "<style>";
     echo "body { font-family: 'Segoe UI', Arial, sans-serif; padding: 20px; background: #1a1a1a; }";
     echo ".container { max-width: 1000px; margin: 0 auto; background: #2d2d2d; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.5); }";
@@ -148,8 +164,10 @@ if (is_dir($realRequested)) {
     echo ".parent { color: #90caf9; background: #383838; margin-bottom: 15px; font-weight: bold; }";
     echo "hr { border: none; border-top: 1px solid #444; margin: 20px 0; }";
     echo ".icon { display: inline-block; width: 24px; }";
+    echo ".pagination { margin-top: 20px; text-align: center; color: #90caf9; }";
+    echo ".pagination a { display: inline-block; margin: 0 5px; padding: 5px 10px; }";
     echo "</style></head><body><div class='container'>";
-    echo "<h2>📂 Wytryszki " . htmlspecialchars($requestUri) . "</h2>";
+    echo "<h2>📂 Wytryszki " . htmlspecialchars($requestUri, ENT_QUOTES, 'UTF-8') . "</h2>";
 
     // Link do katalogu nadrzędnego
     if ($requestUri !== '/' && $requestUri !== '') {
@@ -157,7 +175,7 @@ if (is_dir($realRequested)) {
         if ($parentDir === '.' || $parentDir === '') {
             $parentDir = '/';
         }
-        echo "<a href='" . htmlspecialchars($parentDir) . "' class='parent'><span class='icon'>⬆️</span> [Katalog nadrzędny]</a>";
+        echo "<a href='" . htmlspecialchars($parentDir, ENT_QUOTES, 'UTF-8') . "' class='parent'><span class='icon'>⬆️</span> [Katalog nadrzędny]</a>";
         echo "<hr>";
     }
 
@@ -184,16 +202,36 @@ if (is_dir($realRequested)) {
     sort($folders, SORT_NATURAL | SORT_FLAG_CASE);
     sort($files, SORT_NATURAL | SORT_FLAG_CASE);
 
-    // Wyświetl foldery
-    foreach ($folders as $folder) {
-        $urlPath = rtrim($requestUri, '/') . '/' . rawurlencode($folder);
-        echo "<a href='" . htmlspecialchars($urlPath) . "/' class='folder'><span class='icon'>📁</span> " . htmlspecialchars($folder) . "/</a>";
+    // NAPRAWKA 5: Paginacja dla dużych katalogów
+    $itemsPerPage = 50;
+    $page = isset($_GET['page']) && is_numeric($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+
+    $allItems = array_merge($folders, $files);
+    $totalItems = count($allItems);
+    $totalPages = ceil($totalItems / $itemsPerPage);
+    $page = min($page, max(1, $totalPages));
+    $startIndex = ($page - 1) * $itemsPerPage;
+    $pagedItems = array_slice($allItems, $startIndex, $itemsPerPage);
+
+    // Wyświetl foldery z tej strony
+    $folderCount = 0;
+    foreach ($pagedItems as $item) {
+        $fullPath = $realRequested . DIRECTORY_SEPARATOR . $item;
+        if (!is_dir($fullPath)) {
+            continue;
+        }
+        $urlPath = rtrim($requestUri, '/') . '/' . rawurlencode($item);
+        echo "<a href='" . htmlspecialchars($urlPath, ENT_QUOTES, 'UTF-8') . "/' class='folder'><span class='icon'>📁</span> " . htmlspecialchars($item, ENT_QUOTES, 'UTF-8') . "/</a>";
     }
 
-    // Wyświetl pliki
-    foreach ($files as $file) {
-        $urlPath = rtrim($requestUri, '/') . '/' . rawurlencode($file);
-        $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+    // Wyświetl pliki z tej strony
+    foreach ($pagedItems as $item) {
+        $fullPath = $realRequested . DIRECTORY_SEPARATOR . $item;
+        if (is_dir($fullPath)) {
+            continue;
+        }
+        $urlPath = rtrim($requestUri, '/') . '/' . rawurlencode($item);
+        $ext = strtolower(pathinfo($item, PATHINFO_EXTENSION));
 
         // Ikony dla różnych typów plików
         switch ($ext) {
@@ -228,7 +266,25 @@ if (is_dir($realRequested)) {
                 $icon = '📄';
         }
 
-        echo "<a href='" . htmlspecialchars($urlPath) . "' class='file'><span class='icon'>$icon</span> " . htmlspecialchars($file) . "</a>";
+        echo "<a href='" . htmlspecialchars($urlPath, ENT_QUOTES, 'UTF-8') . "' class='file'><span class='icon'>$icon</span> " . htmlspecialchars($item, ENT_QUOTES, 'UTF-8') . "</a>";
+    }
+
+    // Paginacja - linki do innych stron
+    if ($totalPages > 1) {
+        echo "<div class='pagination'>";
+        echo "Strona $page / $totalPages | ";
+
+        if ($page > 1) {
+            $prevPage = $page - 1;
+            echo "<a href='" . htmlspecialchars($requestUri, ENT_QUOTES, 'UTF-8') . "?page=$prevPage'>← Poprzednia</a> ";
+        }
+
+        if ($page < $totalPages) {
+            $nextPage = $page + 1;
+            echo "<a href='" . htmlspecialchars($requestUri, ENT_QUOTES, 'UTF-8') . "?page=$nextPage'>Następna →</a>";
+        }
+
+        echo "</div>";
     }
 
     echo "</div></body></html>";
