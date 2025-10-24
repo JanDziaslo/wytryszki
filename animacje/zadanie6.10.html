@@ -34,46 +34,69 @@
             animation: samochod5 9s linear 2s forwards;
         }
 
-
         @keyframes samochod1
         {
             0% {transform: translateX(0px);}
-            100% {transform: translateX(1000px);}
+            100% {transform: translateX(900px);}
         }
 
         @keyframes samochod2
         {
             0% {transform: translateX(0px);}
-            100% {transform: translateX(1000px);}
+            100% {transform: translateX(900px);}
         }
 
         @keyframes samochod3
         {
             0% {transform: translateX(0px);}
-            100% {transform: translateX(1000px);}
+            100% {transform: translateX(900px);}
         }
 
         @keyframes samochod4
         {
             0% {transform: translateX(0px);}
-            100% {transform: translateX(1000px);}
+            100% {transform: translateX(900px);}
         }
 
         @keyframes samochod5
         {
             0% {transform: translateX(0px);}
-            100% {transform: translateX(1000px);}
+            100% {transform: translateX(900px);}
+        }
+
+        body
+        {
+            background-color: black;
+        }
+
+        h1
+        {
+            color: white;
+            text-align: center;
+        }
+
+        .animacja
+        {
+            border: 3px solid white;
+        }
+
+        .meta
+        {
+            position: absolute;
+            left: 900px;
+            height: 520px;
         }
     </style>
 </head>
 <body>
-    <h1>Wyścig samochodów</h1>
-    <div class="animacja">
-        <img src="img/samochdzik.png" alt="samochod" class="samochod3"><br>
-        <img src="img/samochdzik.png" alt="samochod" class="samochod1"><br>
-        <img src="img/samochdzik.png" alt="samochod" class="samochod4"><br>
-        <img src="img/samochdzik.png" alt="samochod" class="samochod3"><br>
-        <img src="img/samochdzik.png" alt="samochod" class="samochod5"><br>
-    </div>
+<h1>Wyścig samochodów</h1>
+<div class="animacja">
+    <img src="img/meta-test.jpg" alt="meta" class="meta">
+    <img src="img/samochdzik.png" alt="samochod" class="samochod3"><br>
+    <img src="img/samochdzik.png" alt="samochod" class="samochod1"><br>
+    <img src="img/samochdzik.png" alt="samochod" class="samochod4"><br>
+    <img src="img/samochdzik.png" alt="samochod" class="samochod3"><br>
+    <img src="img/samochdzik.png" alt="samochod" class="samochod5"><br>
+</div>
 </body>
 </html>
