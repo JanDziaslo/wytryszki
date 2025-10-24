@@ -1,4 +1,11 @@
 <?php
+// NAPRAWKA 8: Bezpieczne nagłówki HTTP
+header('X-Frame-Options: DENY');
+header('X-XSS-Protection: 1; mode=block');
+header('X-Content-Type-Options: nosniff');
+header('Content-Security-Policy: default-src \'self\'; style-src \'unsafe-inline\'; script-src \'self\'');
+header('Referrer-Policy: strict-origin-when-cross-origin');
+
 // Pobierz ścieżkę z URL
 $requestUri = $_SERVER['REQUEST_URI'];
 $requestUri = parse_url($requestUri, PHP_URL_PATH);
@@ -204,7 +211,9 @@ if (is_dir($realRequested)) {
 
     // NAPRAWKA 5: Paginacja dla dużych katalogów
     $itemsPerPage = 50;
-    $page = isset($_GET['page']) && is_numeric($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+    // NAPRAWKA 2: Ulepszona walidacja numeru strony - max limit na liczbę stron
+    $maxPageNumber = 10000; // Maksymalnie 10000 stron (500,000 pozycji)
+    $page = isset($_GET['page']) && is_numeric($_GET['page']) ? max(1, min((int)$_GET['page'], $maxPageNumber)) : 1;
 
     $allItems = array_merge($folders, $files);
     $totalItems = count($allItems);
