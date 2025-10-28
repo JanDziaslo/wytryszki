@@ -66,8 +66,21 @@ if ($realRequested === false ||
 // WAŻNE: Jeśli to plik PHP - WYKONAJ GO
 if (is_file($realRequested)) {
     $extension = strtolower(pathinfo($realRequested, PATHINFO_EXTENSION));
+    $filename = strtolower(basename($realRequested));
 
-    // NAPRAWKA 2: Whitelist bezpiecznych rozszerzeń + niebezpieczne rozszerzenia
+    // NAPRAWKA 9: Blokuj dostęp do zabronionych plików
+    $forbiddenFiles = ['readme.md'];
+
+    // Blokuj wszystkie ukryte pliki (zaczynające się od kropki) oraz zabronionych plików
+    if (in_array($filename, $forbiddenFiles, true) || (strlen($filename) > 0 && $filename[0] === '.')) {
+        http_response_code(403);
+        echo "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>403 Forbidden</title>";
+        echo "<style>body{font-family:Arial;padding:40px;background:#1a1a1a;color:#e0e0e0;}h1{color:#ff6b6b;}</style></head>";
+        echo "<body><h1>403 - Dostęp zabroniony</h1></body></html>";
+        exit;
+    }
+
+    // NAPRAWKA 2: Whitelist bezpiecznych rozszerzeń + niebezpieczne rozszerania
     $allowedExtensions = ['php'];
     $dangerousExtensions = ['phtml', 'phar', 'shtml', 'pht', 'phps', 'php3', 'php4', 'php5', 'phtml', 'pht', 'phps'];
 
@@ -146,6 +159,17 @@ if (is_file($realRequested)) {
 
 // Jeśli to katalog - pokaż listing
 if (is_dir($realRequested)) {
+    $dirName = strtolower(basename($realRequested));
+
+    // NAPRAWKA 9b: Blokuj dostęp do ukrytych katalogów (zaczynające się od kropki)
+    if (strlen($dirName) > 0 && $dirName[0] === '.') {
+        http_response_code(403);
+        echo "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>403 Forbidden</title>";
+        echo "<style>body{font-family:Arial;padding:40px;background:#1a1a1a;color:#e0e0e0;}h1{color:#ff6b6b;}</style></head>";
+        echo "<body><h1>403 - Dostęp zabroniony</h1></body></html>";
+        exit;
+    }
+
     $items = @scandir($realRequested);
 
     if ($items === false) {
@@ -191,8 +215,8 @@ if (is_dir($realRequested)) {
 
     // Rozdziel foldery i pliki
     foreach ($items as $item) {
-        // Ukryj pliki/katalogi zaczynające się od kropki
-        if ($item === '.' || $item === '..' || $item[0] === '.') {
+        // Ukryj pliki/katalogi zaczynające się od kropki oraz readme.md
+        if ($item === '.' || $item === '..' || (strlen($item) > 0 && $item[0] === '.') || strtolower($item) === 'readme.md') {
             continue;
         }
 
