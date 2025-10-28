@@ -215,8 +215,8 @@ if (is_dir($realRequested)) {
 
     // Rozdziel foldery i pliki
     foreach ($items as $item) {
-        // Ukryj pliki/katalogi zaczynające się od kropki oraz readme.md
-        if ($item === '.' || $item === '..' || (strlen($item) > 0 && $item[0] === '.') || strtolower($item) === 'readme.md') {
+        // Ukryj pliki/katalogi zaczynające się od kropki oraz readme.md i index.php
+        if ($item === '.' || $item === '..' || (strlen($item) > 0 && $item[0] === '.') || strtolower($item) === 'readme.md' || strtolower($item) === 'index.php') {
             continue;
         }
 
