@@ -1,18 +1,18 @@
 <?php
-$serwer = "100.102.15.25:3306";
-$uzytkownik = "phpmyadmin";
-$haslo = "opa";
-$baza = "21.11_wytryszki";
+$serwer = "100.102.15.25:13306";
+$uzyt = "wytrychy_user";
+$haslo = "gDxajVS2BhMiqcY8xWHU34EpjRpC489T";
+$baza = "wytrychy_db";
 
-// Włączenie raportowania błędów mysqli
-mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+$p = mysqli_connect("$serwer", "$uzyt", "$haslo", "$baza") or die("Problem z serwerem!");
 
-try
-{
-    $laczenie = mysqli_connect($serwer, $uzytkownik, $haslo, $baza);
-    echo "Połączono z bazą danych pomyślnie.";
-    mysqli_close($laczenie);
-} catch (mysqli_sql_exception $e) {
-    die("Błąd połączenia z bazą danych: " . $e->getMessage());
-}
+mysqli_set_charset($p, "utf8");
+
+$q  =  "INSERT  INTO  aktorzy  VALUES  (2137,  'Bartosz',  'Nikitiuk',  'm'  , 'Polska','2137-09-11')";
+
+mysqli_query($p, $q);
+
+mysqli_close($p);
+
+
 ?>
