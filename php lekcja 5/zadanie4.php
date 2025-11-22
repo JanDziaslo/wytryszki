@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>zadanie3</title>
+    <title>zadanie 4</title>
 </head>
 <body>
 
@@ -18,7 +18,7 @@ $p = mysqli_connect($serwer, $uzyt, $haslo, $baza) or die("Problem z serwerem!")
 
 mysqli_set_charset($p, "utf8");
 
-$q = 'SELECT imie, nazwisko, kraj_ur, data_ur FROM aktorzy WHERE data_ur >= "1990-01-10"';
+$q = 'SELECT imie, nazwisko, kraj_ur, data_ur FROM aktorzy WHERE data_ur >= "1990-01-01"';
 
 $wynik = mysqli_query($p, $q) or die("Cos nie dziala z kwerenda");
 
