@@ -9,9 +9,14 @@
 <form action="zadanie5.php" method="post">
     <p><b>Kraj urodzenia</b>
         <br><input type="text" name="kraj_ur"> </p>
-    <p><input type="submit" value="Zamów"></p>
+    <p><input type="submit" value="wyszukaj"></p>
 </form>
 <?php
+$serwer = "100.102.15.25:13306";
+$uzyt = "wytrychy_user";
+$haslo = "gDxajVS2BhMiqcY8xWHU34EpjRpC489T";
+$baza = "wytrychy_db";
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kraj_ur'])) {
 
     if (empty($_POST['kraj_ur'] && isset($_POST['kraj_ur'])))
@@ -22,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kraj_ur'])) {
     {
         $kraj_ur=$_POST['kraj_ur'];
 
-        $connection = mysqli_connect("wytrychy-db", "root", "rootpassword", "Wytrychy-21-11");
+        $connection = mysqli_connect($serwer, $uzyt, $haslo, $baza);
 
         mysqli_set_charset($connection, "utf8");
 
