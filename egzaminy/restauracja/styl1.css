@@ -1,0 +1,53 @@
+body
+{
+    background: #F6E5DC;
+    font-family: Tahoma;
+}
+header
+{
+    background: #2F180C;
+    text-align: center;
+    color: white;
+    height: 60px;
+    margin-top: -22px;
+    margin-left: -8px;
+    margin-right: -8px;
+}
+#opa
+{
+    overflow: auto;
+}
+#lewy
+{
+   /* height: 60px; generalnie to psuje cale wyswietlanie zdjecia i nie wiem jak to zrobic zeby bylo dobrze a jednoczesnie takie sa wymagania w arkuszy */
+    float: left;
+}
+#prawy
+{
+    font-size: 200%;
+    padding: 50px;
+    float: left;
+    margin-left: 400px;
+}
+#dolny
+{
+    background: #D0B6A8;
+    text-align: center;
+    padding: 30px;
+    clear: both;
+}
+footer
+{
+    background: #2F180C;
+    color: white;
+    height: 60px;
+    margin-top: -20px;
+}
+img
+{
+    height: 400px;
+}
+ul
+{
+    list-style: circle;
+}
