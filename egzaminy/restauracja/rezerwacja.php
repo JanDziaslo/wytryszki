@@ -12,13 +12,9 @@ $haslo = "gDxajVS2BhMiqcY8xWHU34EpjRpC489T";
 $baza = "wytrychy_db";
 
 $p = mysqli_connect($serwer, $uzyt, $haslo, $baza) or die("Problem z serwerem!");
-if ($p) {
-    echo "tak";
-}
-else {
-    echo "nie";
-}
-    $z = "insert into rezerwacje VALUES ('$data', '$osoby', '$telefon' )";
+
+$z = "INSERT INTO rezerwacje (data_rez, liczba_osob, telefon) VALUES ('$data', '$osoby', '$telefon')";
+
 mysqli_query($p, $z);
 
 mysqli_close($p);
