@@ -150,7 +150,7 @@ function skrypt4()
         $cena = $_POST['cena'];
         $zdjecie = $_POST['zdjecie'];
 
-        $zapytanie4 = "insert into gry (nazwa, opis, cena, zdjecie) values ($nazwa', '$opis', $cena, '$zdjecie');";
+        $zapytanie4 = "insert into gry (nazwa, opis, cena, zdjecie) values ('$nazwa', '$opis', $cena, '$zdjecie');";
         echo "$zapytanie4";
         mysqli_query($p, $zapytanie4);
 
