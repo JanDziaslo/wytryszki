@@ -95,10 +95,12 @@ function skrypt2()
     }
     mysqli_close($p);
 }
-if (isset($_POST['dodaj'])) {
+if (isset($_POST['dodaj']))
+{
     skrypt4();
 }
-elseif (isset($_POST['opis'])) {
+elseif (isset($_POST['opis']))
+{
     skrypt3();
 }
 
@@ -121,10 +123,42 @@ function skrypt3()
     while ($wiersz = mysqli_fetch_array($wynik))
     {
         echo
+        "<footer style='margin-top: -90px'>" .
             "<h2>". $wiersz['nazwa']. ", " . $wiersz['punkty'] . " punktów, " . $wiersz['cena'] . " zł" . "</h2>".
-            "<p>" . $wiersz['opis'] . "</p>";
+            "<p>" . $wiersz['opis'] . "</p>".
+        "</footer>";
     }
 
     mysqli_close($p);
+}
+
+function skrypt4()
+{
+    $nazwa = $_POST['nazwa'];
+    if ($nazwa!=null)
+    {
+        $serwer = "100.102.15.25:13306";
+        $uzyt = "wytrychy_user";
+        $haslo = "gDxajVS2BhMiqcY8xWHU34EpjRpC489T";
+        $baza = "wytrychy_db";
+
+        $p = mysqli_connect("$serwer", "$uzyt", "$haslo", "$baza") or die("Problem z serwerem!");
+
+        mysqli_set_charset($p, "utf8");
+        $nazwa = $_POST['nazwa'];
+        $opis = $_POST['opis'];
+        $cena = $_POST['cena'];
+        $zdjecie = $_POST['zdjecie'];
+
+        $zapytanie4 = "insert into gry (nazwa, opis, cena, zdjecie) values ($nazwa', '$opis', $cena, '$zdjecie');";
+        echo "$zapytanie4";
+        mysqli_query($p, $zapytanie4);
+
+        mysqli_close($p);
+    }
+    else {
+        die("Brak nazwy gry!");
+    }
+
 }
 ?>
