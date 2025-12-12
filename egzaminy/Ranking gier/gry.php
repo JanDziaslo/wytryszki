@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Gry komputerowe</title>
     <link rel="stylesheet" href="styl.css">
-
 </head>
 <body>
 <header>
@@ -13,10 +12,10 @@
 <aside class="lewy">
     <h3>Top 5 gier w tym miesiacu</h3><br>
     <ul>
-   <?php zapytanie3(); ?>
+   <?php skrypt1(); ?>
     </ul>
-        <br>
-    <h3>Nasz sklep</h3><br>
+
+    <br><h3>Nasz sklep</h3><br>
     <a href="http://sklep.gry.pl">Tu kupisz gry</a><br>
     <h3>Strone wykonał</h3><br>
     <text>213769420</text>
@@ -24,7 +23,7 @@
 </aside>
 <main>
 <div class="gry">
-
+<?php skrypt2(); ?>
 </div>
 </main>
 <aside class="prawy">
@@ -38,13 +37,13 @@
         <input type="number" id="cena" name="cena"><br>
         <label for="zdjecie">Zdjecie</label><br>
         <input id="zdjecie" name="zdjecie" type="text"><br>
-        <button type="submit">Dodaj</button><br><br>
+        <button type="submit" name="dodaj">Dodaj</button><br><br>
     </form>
 </aside>
 <footer>
     <form action="gry.php" method="post">
-        <input type="text" id="opis-stopka" name="opis-stopka">
-        <button type="submit">Pokaż opis</button>
+        <input type="number" id="opis-stopka" name="opis-stopka">
+        <button type="submit" name="opis">Pokaż opis</button>
     </form>
 </footer>
 
@@ -53,22 +52,7 @@
 
 <?php
 
-$serwer = "100.102.15.25:13306";
-$uzyt = "wytrychy_user";
-$haslo = "gDxajVS2BhMiqcY8xWHU34EpjRpC489T";
-$baza = "wytrychy_db";
-
-$p = mysqli_connect("$serwer", "$uzyt", "$haslo", "$baza") or die("Problem z serwerem!");
-
-mysqli_set_charset($p, "utf8");
-
-$zapytanie3  =  "SELECT nazwa, punkty FROM gry LIMIT 5;";
-
-mysqli_query($p, $zapytanie3);
-
-mysqli_close($p);
-
-function zapytanie3()
+function skrypt1()
 {
     $serwer = "100.102.15.25:13306";
     $uzyt = "wytrychy_user";
@@ -77,12 +61,70 @@ function zapytanie3()
 
     $p = mysqli_connect("$serwer", "$uzyt", "$haslo", "$baza") or die("Problem z serwerem!");
     mysqli_set_charset($p, "utf8");
-    $zapytanie3  =  "SELECT nazwa, punkty FROM gry LIMIT 5;";
-    $wybik = mysqli_query($p, $zapytanie3);
-    while ($wiersz = mysqli_fetch_array($wybik)) {
-        echo "<li>" . $wiersz['nazwa'] . " " . $wiersz['punkty'] . "</li>";
+    $zapytanie3  =  "SELECT nazwa, punkty FROM gry order by punkty desc LIMIT 5;";
+    $wynik = mysqli_query($p, $zapytanie3);
+
+    while ($wiersz = mysqli_fetch_array($wynik))
+    {
+        echo "<li>" . $wiersz['nazwa'] ." ". "<div class='punkty'>" . $wiersz['punkty'] . "</div>"."</li>";
     }
+
     mysqli_close($p);
 }
 
+function skrypt2()
+{
+    $serwer = "100.102.15.25:13306";
+    $uzyt = "wytrychy_user";
+    $haslo = "gDxajVS2BhMiqcY8xWHU34EpjRpC489T";
+    $baza = "wytrychy_db";
+
+    $p = mysqli_connect("$serwer", "$uzyt", "$haslo", "$baza") or die("Problem z serwerem!");
+    mysqli_set_charset($p, "utf8");
+    $zapytanie1  =  "select id, nazwa, zdjecie from gry;";
+
+    $wynik = mysqli_query($p, $zapytanie1);
+
+    while ($wiersz = mysqli_fetch_array($wynik))
+    {
+        echo
+            "<div class='obrazek'>".
+            "<img src='img/" . $wiersz['zdjecie'] . "' alt='" . $wiersz['nazwa'] . "'>" . "<br>" .
+            "<p>" . $wiersz['nazwa'] . "</p>" . "<br>" .
+            "</div>";
+    }
+    mysqli_close($p);
+}
+if (isset($_POST['dodaj'])) {
+    skrypt4();
+}
+elseif (isset($_POST['opis'])) {
+    skrypt3();
+}
+
+function skrypt3()
+{
+    $serwer = "100.102.15.25:13306";
+    $uzyt = "wytrychy_user";
+    $haslo = "gDxajVS2BhMiqcY8xWHU34EpjRpC489T";
+    $baza = "wytrychy_db";
+
+    $p = mysqli_connect("$serwer", "$uzyt", "$haslo", "$baza") or die("Problem z serwerem!");
+
+    mysqli_set_charset($p, "utf8");
+    $ID = $_POST['opis-stopka'];
+
+    $zapytanie  =  "SELECT nazwa, punkty, cena, opis FROM gry WHERE id = $ID;";
+
+    $wynik = mysqli_query($p, $zapytanie);
+
+    while ($wiersz = mysqli_fetch_array($wynik))
+    {
+        echo
+            "<h2>". $wiersz['nazwa']. ", " . $wiersz['punkty'] . " punktów, " . $wiersz['cena'] . " zł" . "</h2>".
+            "<p>" . $wiersz['opis'] . "</p>";
+    }
+
+    mysqli_close($p);
+}
 ?>

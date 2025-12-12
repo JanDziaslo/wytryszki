@@ -41,28 +41,36 @@ main
 }
 @media only screen and (max-width: 800px)
 {
-    .prawy, .lewy main
+    .prawy, .lewy, main
     {
         width: 100%;
     }
-}
-footer
-{
-    background-color: indigo;
-    height: 150px;
-    clear: both;
 }
 .punkty
 {
     background-color: tomato;
     border-radius: 50%;
     padding: 5px;
+    text-align: center;
+    display: inline-block;
 }
 .gry
 {
-    float: left;
+
     text-align: center;
     padding: 3px;
+
+}
+.obrazek
+{
+    float: left;
+    display: inline-block;
+}
+footer
+{
+    background-color: indigo;
+    height: 150px;
+    clear: both;
 }
 input
 {
