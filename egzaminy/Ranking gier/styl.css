@@ -2,12 +2,12 @@
 {
     font-family: Garamond;
     color: white;
+    margin:0;
 }
 header
 {
     background-color: indigo;
     text-align: center;
-    height: 600px;
     padding: 2px;
 }
 .prawy,.lewy
@@ -19,5 +19,57 @@ main
 {
     background-color: black;
     height: 600px;
-    /* nie dokonczone */
+    overflow: scroll;
+}
+@media only screen and (min-width: 801px)
+{
+    .lewy
+    {
+        width: 20%;
+        float: left;
+    }
+    .prawy
+    {
+        width: 20%;
+        float: left;
+    }
+    main
+    {
+        width: 60%;
+        float: left;
+    }
+}
+@media only screen and (max-width: 800px)
+{
+    .prawy .lewy main
+    {
+        width: 100%;
+    }
+}
+footer
+{
+    background-color: indigo;
+    height: 150px;
+    clear: both;
+}
+.punkty
+{
+    background-color: tomato;
+    border-radius: 50%;
+    padding: 5px;
+}
+.gry
+{
+    float: left;
+    text-align: center;
+    padding: 3px;
+}
+input
+{
+    margin: 10px;
+    color: indigo;
+}
+button
+{
+    color: black;
 }

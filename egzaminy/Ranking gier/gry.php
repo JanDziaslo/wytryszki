@@ -21,7 +21,9 @@
     <text>213769420</text>
 </aside>
 <main>
+<div class="gry">
 
+</div>
 </main>
 <aside class="prawy">
     <h3>Dodaj nowa gre</h3>
@@ -49,6 +51,19 @@
 
 <?php
 
+$serwer = "100.102.15.25:13306";
+$uzyt = "wytrychy_user";
+$haslo = "gDxajVS2BhMiqcY8xWHU34EpjRpC489T";
+$baza = "wytrychy_db";
 
+$p = mysqli_connect("$serwer", "$uzyt", "$haslo", "$baza") or die("Problem z serwerem!");
+
+mysqli_set_charset($p, "utf8");
+
+$zapytanie3  =  "SELECT nazwa, punkty FROM gry LIMIT 5;";
+
+mysqli_query($p, $zapytanie3);
+
+mysqli_close($p);
 
 ?>

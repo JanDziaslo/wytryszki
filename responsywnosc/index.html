@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>@media</title>
+    <style>
+        @media only screen and (min-width: 768px) {
+            body {
+                background-color: lightgray;
+            }
+            .profil
+            {
+                width: 900px;
+                display: flex;
+                float: left;
+            }
+
+            .lewy, .prawy
+            {
+                width: 50%;
+                padding: 10px;
+            }
+
+            .lewy img
+            {
+                width: 100%;
+            }
+        }
+
+        @media only screen and (max-width: 768px)
+        {
+            body {
+                background-color: white;
+            }
+
+            .prawy
+            {
+                text-align: center;
+            }
+
+            .lewy img
+            {
+                width: 100%;
+            }
+
+        }
+    </style>
+</head>
+<body>
+<div class="profil">
+    <div class="lewy">
+        <img src="a_photo_of_Maciej_7.webp">
+    </div>
+    <div class="prawy">
+        <h1>Jan Dziąsło</h1>
+        <p>
+            @media to reguła CSS, która pozwala na stosowanie różnych stylów w zależności od cech urządzenia wyświetlającego stronę, takich jak szerokość ekranu, orientacja czy rozdzielczość. Umożliwia tworzenie responsywnych projektów, które dostosowują się do różnych rozmiarów ekranów, zapewniając optymalne doświadczenie użytkownika na komputerach, tabletach i smartfonach.
+        </p>
+        <p>
+            Zainteresowania:
+        <ul>
+            <li>Tworzenie responsywnych stron internetowych</li>
+            <li>Optymalizacja doświadczenia użytkownika na różnych urządzeniach</li>
+            <li>Eksperymentowanie z różnymi właściwościami CSS w kontekście mediów</li>
+        </ul>
+        </p>
+    </div>
+</div>
+</body>
+</html>
