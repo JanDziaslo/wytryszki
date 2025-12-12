@@ -41,7 +41,7 @@ main
 }
 @media only screen and (max-width: 800px)
 {
-    .prawy .lewy main
+    .prawy, .lewy main
     {
         width: 100%;
     }
