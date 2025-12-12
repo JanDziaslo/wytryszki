@@ -145,19 +145,20 @@ function skrypt4()
         $p = mysqli_connect("$serwer", "$uzyt", "$haslo", "$baza") or die("Problem z serwerem!");
 
         mysqli_set_charset($p, "utf8");
+
         $nazwa = $_POST['nazwa'];
         $opis = $_POST['opis'];
         $cena = $_POST['cena'];
         $zdjecie = $_POST['zdjecie'];
 
         $zapytanie4 = "insert into gry (nazwa, opis, cena, zdjecie) values ('$nazwa', '$opis', $cena, '$zdjecie');";
-        echo "$zapytanie4";
+
         mysqli_query($p, $zapytanie4);
 
         mysqli_close($p);
     }
     else {
-        die("Brak nazwy gry!");
+        die;
     }
 
 }
