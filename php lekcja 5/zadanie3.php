@@ -9,7 +9,7 @@
 
 <?php
 
-$serwer = "100.102.15.25:13306";
+$serwer = "127.0.0.1:13306";
 $uzyt = "wytrychy_user";
 $haslo = "gDxajVS2BhMiqcY8xWHU34EpjRpC489T";
 $baza = "wytrychy_db";
