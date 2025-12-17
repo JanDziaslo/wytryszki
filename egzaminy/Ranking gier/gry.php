@@ -74,7 +74,7 @@ function skrypt1()
 
 function skrypt2()
 {
-    $serwer = "100.102.15.25:13306";
+    $serwer = "127.0.0.1:13306";
     $uzyt = "wytrychy_user";
     $haslo = "gDxajVS2BhMiqcY8xWHU34EpjRpC489T";
     $baza = "wytrychy_db";
@@ -106,7 +106,7 @@ elseif (isset($_POST['opis']))
 
 function skrypt3()
 {
-    $serwer = "100.102.15.25:13306";
+    $serwer = "127.0.0.1:13306";
     $uzyt = "wytrychy_user";
     $haslo = "gDxajVS2BhMiqcY8xWHU34EpjRpC489T";
     $baza = "wytrychy_db";
@@ -137,7 +137,7 @@ function skrypt4()
     $nazwa = $_POST['nazwa'];
     if ($nazwa!=null)
     {
-        $serwer = "100.102.15.25:13306";
+        $serwer = "127.0.0.1:13306";
         $uzyt = "wytrychy_user";
         $haslo = "gDxajVS2BhMiqcY8xWHU34EpjRpC489T";
         $baza = "wytrychy_db";
