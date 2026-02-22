@@ -38,7 +38,7 @@ jobs:
               -o StrictHostKeyChecking=yes \
               -o ConnectTimeout=10 \
               ${{ secrets.SSH_USER }}@${{ steps.ts-ip.outputs.ip }} \
-              "cd ${{ secrets.DEPLOY_PATH }} && git pull origin main"
+              "cd ${{ secrets.DEPLOY_PATH }} && git fetch origin && git reset --hard origin/main"
 
       - name: Cleanup SSH key
         if: always()
