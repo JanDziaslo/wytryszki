@@ -71,7 +71,7 @@ try {
 
 
     echo "Zadanie 7<br><br>";
-    echo "nie wiem nie chce dziala, nie chce mi sie <br>";
+    echo "nie wiem nie chce dzialac, nie chce mi sie <br>";
 
     echo "<form action='index.php' method='get'>";
     echo "<input type='text' name='woj' id='woj'> </input> <br><br>";
