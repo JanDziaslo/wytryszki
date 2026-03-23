@@ -3,6 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <title>PDO lekcja 2</title>
+    <style>
+        /* style robil github copilot */
+        /* zadania robilem sam po prostu chcialem zeby to wygladalo odrobine lepiej */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --bg-color: #1a1a1a;
+            --text-color: #e0e0e0;
+            --form-bg: #2d2d2d;
+            --form-border: #444;
+            --btn-color: #5cb85c;
+            --btn-hover: #66bb6a;
+            --shadow-color: rgba(255,255,255,0.1);
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 20px;
+            line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        form {
+            background-color: var(--form-bg);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px var(--shadow-color);
+        }
+        
+        input[type="text"],
+        input[type="number"],
+        input[type="email"] {
+            padding: 8px;
+            margin: 5px 0 15px 0;
+            border: 1px solid var(--form-border);
+            border-radius: 4px;
+            width: 100%;
+            max-width: 300px;
+            font-size: 14px;
+            background-color: var(--form-bg);
+            color: var(--text-color);
+            transition: border-color 0.3s ease;
+        }
+        
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        input[type="email"]:focus {
+            outline: none;
+            border-color: var(--btn-color);
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+        }
+        
+        input[type="submit"] {
+            background-color: var(--btn-color);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        
+        input[type="submit"]:hover {
+            background-color: var(--btn-hover);
+        }
+        
+
+    </style>
 </head>
 <body>
 
@@ -19,7 +96,7 @@ try {
     $pdo->query('SET NAMES utf8');
 
     $stmtZad1 = $pdo->query("SELECT * FROM ryby");
-    echo "Zadanie 1<br><br>";
+    echo "<h2>Zadanie 1</h2>";
 
     foreach ($stmtZad1 as $rowZad1) {
         echo $rowZad1['id'] . " " . $rowZad1['nazwa'] . " " . $rowZad1['wystepowanie'] . " " . $rowZad1['styl_zycia'] . "<br>";
@@ -27,7 +104,7 @@ try {
     echo "<br>";
 
     $stmtZad2 = $pdo->query("SELECT nazwa, styl_zycia FROM ryby");
-    echo "Zadanie 2<br><br>";
+    echo "<h2>Zadanie 2</h2>";
 
     foreach ($stmtZad2 as $rowZad2) {
         echo $rowZad2['nazwa'] . " " . $rowZad2['styl_zycia'] . "<br>";
@@ -35,7 +112,7 @@ try {
     echo "<br>";
 
     $stmtZad3 = $pdo->query("SELECT * FROM samochody where kolor like 'czerwony'");
-    echo "Zadanie 3<br><br>";
+    echo "<h2>Zadanie 3</h2>";
 
     foreach ($stmtZad3 as $rowZad3) {
         echo $rowZad3['id'] . " " . $rowZad3['marka'] . " ". $rowZad3['model']. " ". $rowZad3['rocznik'] . " " . $rowZad3['kolor'] . " " . $rowZad3['stan'] . "<br>";
@@ -43,7 +120,7 @@ try {
     echo "<br>";
 
     $stmtZad4 = $pdo->query("SELECT * FROM uzytkownik where nazwisko like 'k%'");
-    echo "Zadanie 4<br><br>";
+    echo "<h2>Zadanie 4</h2>";
 
     foreach ($stmtZad4 as $rowZad4) {
         echo $rowZad4['id'] . " " . $rowZad4['imie'] . " ". $rowZad4['nazwisko']. " ". $rowZad4['telefon'] . " " . $rowZad4['email'] . "<br>";
@@ -51,13 +128,13 @@ try {
     echo "<br>";
 
     $stmtZad5 = $pdo->query("SELECT * FROM samochody  ORDER BY rocznik ASC");
-    echo "Zadanie 5<br><br>";
+    echo "<h2>Zadanie 5</h2>";
 
     foreach ($stmtZad5 as $rowZad5) {
         echo $rowZad5['id'] . " " . $rowZad5['marka'] . " ". $rowZad5['model']. " ". $rowZad5['rocznik'] . " " . $rowZad5['kolor'] . " " . $rowZad5['stan'] . "<br>";
     }
     echo "<br>";
-    echo "Zadanie 6<br><br>";
+    echo "<h2>Zadanie 6</h2>";
 
     echo "<form action='index.php' method='post'>";
     echo "<input type='number' name='rybka' id='rybka'> </input> <br><br>";
@@ -80,7 +157,7 @@ try {
     echo "<br>";
 
 
-    echo "Zadanie 7<br><br>";
+    echo "<h2>Zadanie 7</h2>";
 
     echo "<form action='index.php' method='get'>";
     echo "<input type='text' name='woj' id='woj'> </input> <br><br>";
@@ -103,7 +180,7 @@ try {
     echo "<br>";
 
 
-    echo "Zadanie 8<br><br>";
+    echo "<h2>Zadanie 8</h2>";
 
     echo "<form action='index.php' method='post'>";
     echo "<input type='text' name='rocznik' id='rocznik'> </input> <br><br>";
@@ -127,7 +204,7 @@ try {
 
 
 
-    echo "Zadanie 9<br><br>";
+    echo "<h2>Zadanie 9</h2>";
 
     echo "<form action='index.php' method='post'>";
     echo "<input type='text' name='email' id='email'> </input> <br><br>";
@@ -151,7 +228,7 @@ try {
 
 
 
-    echo "Zadanie 10<br><br>";
+    echo "<h2>Zadanie 10</h2>";
 
     echo "<form action='index.php' method='post'>";
     echo "<input type='text' name='ryby'> </input> <br><br>";
@@ -177,7 +254,7 @@ try {
 
 
 
-    echo "Zadanie 11<br><br>";
+    echo "<h2>Zadanie 11</h2>";
 
     echo "<form action='index.php' method='post'>";
     echo "<input type='text' name='imie' placeholder='imie'>  <br><br>";
@@ -203,7 +280,7 @@ try {
 
 
 
-    echo "Zadanie 12<br><br>";
+    echo "<h2>Zadanie 12</h2>";
 
     echo "<form action='index.php' method='post'>";
     echo "<input type='text' name='id' placeholder='id uzytkownika'>  <br><br>";
@@ -226,7 +303,7 @@ try {
 
 
 
-    echo "Zadanie 13<br><br>";
+    echo "<h2>Zadanie 13</h2>";
 
     echo "<form action='index.php' method='post'>";
     echo "<input type='text' name='id' placeholder='id samochodu'>  <br><br>";
@@ -247,7 +324,7 @@ try {
 
 
 
-    echo "Zadanie 14<br><br>";
+    echo "<h2>Zadanie 14</h2>";
 
     echo "<form action='index.php' method='post'>";
     echo "<input type='number' name='samochod' placeholder='id samochodu'>  <br><br>";
@@ -274,6 +351,92 @@ try {
 
 
 
+
+    echo "<h2>Zadanie 15</h2>";
+
+
+    $stmtZad15 = $stmtZad14;
+
+
+    $stmtZad15 = $pdo->query("SELECT * FROM ryby join lowisko on ryby.id=lowisko.Ryby_id" );
+
+    foreach ($stmtZad15 as $rowZad15) {
+        echo $rowZad15['id'] . " " . $rowZad15['wystepowanie'] . " ". $rowZad15['akwen'] . " " . $rowZad15['wojewodztwo'] . "<br>";
+    }
+
+    echo "<br>";
+
+
+
+    echo "<h2>Zadanie 16</h2>";
+
+
+    $stmtZad16 = $stmtZad15;
+
+
+    $stmtZad16 = $pdo->query("SELECT * FROM zamowienia join samochody on samochody.id=zamowienia.Samochody_id " );
+
+    foreach ($stmtZad16 as $rowZad16) {
+        echo $rowZad16['id'] . " " . $rowZad16['Klient'] . " ". $rowZad16['telefon'] . " " . $rowZad16['dataZam'] . " " .$rowZad16['marka']." " . $rowZad16['model']." " . $rowZad16['rocznik']." " . $rowZad16['kolor']." " . $rowZad16['stan']. " " ."<br>";
+    }
+
+    echo "<br>";
+
+
+
+    echo "<h2>Zadanie 17</h2>";
+
+
+    $stmtZad17 = $stmtZad16;
+
+    echo "brakuje tabel do zrobienia tego zadania <br><br>";
+
+    echo "<br>";
+
+
+    echo "<h2>Zadanie 18</h2>";
+
+
+    $stmtZad18 = $stmtZad17;
+
+    $stmtZad18 = $pdo->query("SELECT COUNT(*) as ilosc FROM samochody" );
+
+    $rowZad18 = $stmtZad18->fetch();
+    $iloscSam = $rowZad18['ilosc'];
+    echo "Ilosc samochodow: " . $iloscSam;
+
+
+    echo "<br><br>";
+
+
+    echo "<h2>Zadanie 19</h2>";
+
+
+    $stmtZad19 = $stmtZad18;
+
+    $stmtZad19 = $pdo->query("SELECT AVG(wynik) as srednia FROM wyniki" );
+
+    $rowZad19 = $stmtZad19->fetch();
+    $sredniaWyn = $rowZad19['srednia'];
+    echo "Srednia: " . $sredniaWyn;
+
+
+    echo "<br><br>";
+
+
+    echo "<h2>Zadanie 20</h2>";
+
+
+    $stmtZad20 = $stmtZad19;
+
+    $stmtZad20 = $pdo->query("SELECT COUNT(*) as ilosc FROM ryby GROUP BY styl_zycia;" );
+
+    $rowZad20 = $stmtZad20->fetch();
+    $styl = $rowZad20['ilosc'];
+    echo "ilosc ryb o danym stylu zycia: " . $styl;
+
+
+    echo "<br>";
 
 
 } catch (PDOException $e) {
