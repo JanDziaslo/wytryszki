@@ -1,0 +1,53 @@
+*
+{
+    font-family: Tahoma;
+    margin: 0;
+
+}
+h1, h2
+{
+    text-align: center;
+}
+header, footer
+{
+    background-color: maroon;
+    color: white;
+    padding: 10px;
+}
+#lewy, #prawy
+{
+    width: 50%;
+    height: 500px;
+}
+#lewy
+{
+    background-color: lightsalmon;
+    float: left;
+}
+#prawy
+{
+    background-color: darksalmon;
+    float: right;
+}
+td
+{
+    border: 1px solid maroon;
+}
+table
+{
+    width: 85%;
+    margin: auto;
+    border-collapse: collapse;
+}
+ol
+{
+    list-style-type: none;
+}
+#przycisk
+{
+    background-color: maroon;
+    color: white;
+    margin-left: 20px;
+    padding: 10px;
+    border-radius: 20px;
+}
