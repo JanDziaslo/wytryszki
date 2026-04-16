@@ -3,7 +3,7 @@ $serwer = "100.125.41.106:13306";
 $uzyt = "wytrychy_user";
 $haslo = "gDxajVS2BhMiqcY8xWHU34EpjRpC489T";
 $baza = "wytrychy_16_04";
-
+$personel = "policjant";
 $p = mysqli_connect($serwer, $uzyt, $haslo, $baza) or die("Problem z serwerem!");
 
 $zapytanie2 = "SELECT personel.id, personel.nazwisko FROM personel LEFT JOIN rejestr ON personel.id = rejestr.id_personel WHERE id_personel IS NULL;";
@@ -38,10 +38,13 @@ if (isset($_POST['skrypt3']))
 </head>
 <body>
 <header>
+    <br>
     <h1>Zgłoszenia wydarzeń</h1>
+    <br>
 </header>
 <main>
     <section id="lewy">
+        <br>
         <h2>Personel</h2>
         <form action="index.php" method="post" >
             <input type="radio" value="policjant" checked id="pol" name="personel" >
@@ -58,6 +61,13 @@ if (isset($_POST['skrypt3']))
                 <td>Nazwisko</td>
             </tr>
             <?php
+            if ($personel == "policjant") {
+                echo "<h3>Wybrano opcję: Policjant</h3><br>";
+            }
+            else
+            {
+                echo "<h3>Wybrano opcję: Ratownik</h3><br>";
+            }
             while ($wiersz = mysqli_fetch_array($wynik1))
                 echo "<tr>"
                     . "<td>" . $wiersz['id'] . "</td>"
@@ -69,6 +79,7 @@ if (isset($_POST['skrypt3']))
     </section>
 
     <section id="prawy">
+        <br>
         <h2>Nowe Zgłoszenie</h2><br>
         <ol>
             <?php
@@ -84,7 +95,7 @@ if (isset($_POST['skrypt3']))
         </form>
     </section>
     <footer>
-        <p>Strone Wykonał: Jan Dziąsło</p>
+        <p>Stronę Wykonał: Jan Dziąsło</p><br>
     </footer>
 </main>
 </body>
